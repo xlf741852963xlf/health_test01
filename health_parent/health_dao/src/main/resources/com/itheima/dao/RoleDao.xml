@@ -7,4 +7,94 @@
             select role_id from t_user_role where user_id=#{userId}
         )
     </select>
+
+
+    <select id="findAllRoles" resultType="com.itheima.pojo.Role">
+        SELECT * FROM t_role
+    </select>
+
+    <select id="finRolesByQueryString" parameterType="string" resultType="com.itheima.pojo.Role">
+        select * from t_role
+        <where>
+            <if test="value!=null and value.length>0">
+                name like #{value} or keyword like #{value}
+            </if>
+        </where>
+    </select>
+
+
+    <insert id="addRole" parameterType="com.itheima.pojo.Role" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO t_role (name,keyword,description) VALUES (#{name},#{keyword},#{description})
+    </insert>
+
+    <insert id="addMenuIds" parameterType="integer">
+        INSERT INTO t_role_menu (role_id,menu_id) VALUES (#{id},#{menuId})
+    </insert>
+
+    <delete id="deleteMenuIds" parameterType="integer">
+        delete from t_role_menu where role_id=#{id}
+    </delete>
+
+    <delete id="deletePermissionIds" parameterType="integer">
+        delete from t_role_permission where role_id=#{id}
+    </delete>
+
+    <insert id="addPermissionIds" parameterType="integer">
+        INSERT INTO t_role_permission (role_id,permission_id) VALUES (#{id},#{permissionid})
+    </insert>
+
+    <select id="findRoleById" parameterType="integer" resultType="com.itheima.pojo.Role">
+        select * from t_role where id=#{id}
+    </select>
+
+    <select id="findPermissionIdsByRoleId" parameterType="integer" resultType="integer">
+        select permission_id from t_role_permission where role_id=#{roleId}
+    </select>
+
+    <select id="findMenuIdsByRoleId" parameterType="integer" resultType="integer">
+        select menu_id from t_role_menu where role_id=#{roleId}
+    </select>
+
+    <select id="findRoleIdsFromt_Role_User" parameterType="integer" resultType="integer">
+        select count(1) from t_user_role where role_id=#{id}
+    </select>
+
+    <delete id="deleteRoleIdsFromt_Role_Permission" parameterType="integer">
+        delete from t_role_permission where role_id=#{id}
+    </delete>
+
+    <delete id="deleteRoleIdsFromt_Role_menu" parameterType="integer">
+        delete from t_role_menu where role_id=#{id}
+    </delete>
+
+    <delete id="deleteRoleIdsFromt_Role" parameterType="integer">
+        delete from t_role where id=#{id}
+    </delete>
+
+    <delete id="deleteMenuByRoleId" parameterType="integer">
+        delete from t_role_menu where role_id=#{id}
+    </delete>
+
+
+    <insert id="addMenuIdsByRoleId" parameterType="integer">
+        insert into t_role_menu (role_id,menu_id) values (#{id},#{menuId})
+    </insert>
+
+    <delete id="deletePermissionIdsByRoleId" parameterType="integer">
+        delete from t_role_permission where role_id =#{id}
+    </delete>
+
+    <insert id="addPermissionIdsByRoleId" parameterType="integer">
+        insert into t_role_permission (role_id,permission_id) values (#{id},#{permissionId})
+    </insert>
+
+    <update id="updateRole" parameterType="com.itheima.pojo.Role">
+        UPDATE t_role SET
+                name=#{name},
+                keyword=#{keyword},
+                description=#{description} where id=#{id}
+    </update>
+
+
+
 </mapper>

@@ -12,7 +12,7 @@
 
     <groupId>com.itheima</groupId>
     <artifactId>health_service</artifactId>
-
+    <packaging>war</packaging>
     <dependencies>
         <dependency>
             <groupId>com.itheima</groupId>

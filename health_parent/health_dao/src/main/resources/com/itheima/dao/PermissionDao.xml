@@ -8,4 +8,38 @@
             select permission_id from t_role_permission where role_id=#{roleId}
         )
     </select>
+
+    <select id="findPermission" parameterType="string" resultType="com.itheima.pojo.Permission">
+        select * from t_permission
+        <where>
+            <if test="value!=null and value.length>0">
+                name like #{value} or keyword like #{value}
+            </if>
+        </where>
+    </select>
+
+    <select id="findPermissionInMid" parameterType="integer" resultType="integer">
+        SELECT COUNT(1) FROM t_role_permission WHERE permission_id=#{id}
+    </select>
+
+    <delete id="deletePermission" parameterType="integer">
+        DELETE FROM t_permission WHERE id=#{id}
+    </delete>
+
+
+    <insert id="addPermission" parameterType="com.itheima.pojo.Permission">
+        INSERT INTO t_permission (name,keyword,description) VALUES (#{name},#{keyword},#{description})
+    </insert>
+
+    <update id="updatePermission" parameterType="com.itheima.pojo.Permission">
+        UPDATE t_permission SET name=#{name},keyword=#{keyword},description=#{description} where id=#{id}
+    </update>
+
+    <select id="findPermissionById" parameterType="integer" resultType="com.itheima.pojo.Permission">
+        SELECT * FROM t_permission WHERE id=#{id}
+    </select>
+
+    <select id="findAllPermission" resultType="com.itheima.pojo.Permission">
+        select * from t_permission
+    </select>
 </mapper>

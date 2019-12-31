@@ -68,4 +68,35 @@ public interface MessageConstant {
     static final String GET_BUSINESS_REPORT_FAIL = "获取运营统计数据失败";
     static final String GET_PACKAGE_LIST_SUCCESS = "查询套餐列表数据成功";
     static final String GET_PACKAGE_LIST_FAIL = "查询套餐列表数据失败";
+    static final String GET_MENUBYID_FAIL = "根据id查询菜单数据失败";
+    static final String GET_MENUBYID_SUCCESS = "根据id查询菜单数据成功";
+    static final String GET_USER_SUCCESS = "获取管理用户数据成功";
+    static final String GET_USER_FAIL = "获取管理用户失败";
+    static final String DELETE_USER_FAIL = "删除管理用户失败";
+    static final String DELETE_USER_SUCCESS = "删除管理用户成功";
+    static final String GET_ROLE_SUCCESS = "获取角色数据信息成功";
+    static final String GET_ROLE_FAIL = "获取角色数据信息失败";
+    static final String ADD_USER_SUCCESS = "增加用户数据信息成功";
+    static final String ADD_USER_FAIL = "增加用户数据信息失败";
+    static final String GET_PERMISSION_FAIL = "获取权限数据信息失败";
+    static final String GET_PERMISSION_SUCCESS = "获取权限数据信息成功";
+    static final String DELETE_PERMISSION_SUCCESS = "删除权限数据信息成功";
+    static final String DELETE_PERMISSION_FAIL = "删除权限数据信息失败";
+    static final String ADD_PERMISSION_SUCCESS = "增加权限数据信息成功";
+    static final String ADD_PERMISSION_FAIL = "增加权限数据信息失败";
+    static final String EDIT_PERMISSION_FAIL = "修改权限数据信息失败";
+    static final String EDIT_PERMISSION_SUCCESS = "修改权限数据信息成功";
+    static final String GET_MENUS_SUCCESS = "获取菜单数据成功";
+    static final String GET_MENUS_FAIL = "获取菜单数据失败";
+    static final String ADD_ROLES_SUCCESS = "增加角色成功";
+    static final String ADD_ROLES_FAIL = "增加角色失败";
+    static final String DELETE_ROLES_FAIL = "删除角色失败";
+    static final String DELETE_ROLES_SUCCESS = "删除角色成功";
+    static final String DELETE_MENUS_SUCCESS = "删除菜单成功";
+    static final String DELETE_MENUS_FAIL = "删除菜单失败";
+    static final String EDIT_USER_FAIL = "编辑用户失败";
+    static final String EDIT_USER_SUCCESS = "编辑用户成功";
+    static final String UPDATE_MENU_SUCCESS = "编辑菜单成功";
+    static final String UPDATE_MENU_FAIL = "编辑菜单失败";
+
 }

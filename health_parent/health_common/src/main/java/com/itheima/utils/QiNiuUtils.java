@@ -17,10 +17,10 @@ import java.util.List;
 
 public class QiNiuUtils {
 
-    private static final String ACCESSKEY = "SFEru-42dYFEvmHot4dz1UhsepDmOPDql0AfFt8p";
-    private static final String SECRETKEY = "aCzett8JLbldF42PhQGzw6ymQyWreY4Fu8drPKG3";
-    private static final String BUCKET = "sz82";
-    public static final String DOMAIN= "http://q2r11ygqx.bkt.clouddn.com/";
+    private static final String ACCESSKEY = "NTC0hc1YNFsNRtGJGM23ActFoZe670cvoG1m45Rz";
+    private static final String SECRETKEY = "3jXQidWhkjeRdjeuZ8fMrrXWrTwv8xfweZF5vDd6";
+    private static final String BUCKET = "itheima1health";
+    public static final String DOMAIN= "http://q2sd78bwz.bkt.clouddn.com/";
 
     public static void main(String[] args) {
         uploadFile("C:\\Users\\Eric\\Desktop\\file\\timg.jpg","迪丽热巴.jpg");

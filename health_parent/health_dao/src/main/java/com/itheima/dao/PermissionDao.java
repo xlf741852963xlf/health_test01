@@ -1,7 +1,9 @@
 package com.itheima.dao;
 
+import com.github.pagehelper.Page;
 import com.itheima.pojo.Permission;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,4 +18,19 @@ public interface PermissionDao {
      * @return
      */
     Set<Permission> findByRoleId(Integer roleId);
+    /**获取返回权限信息*/
+    Page<Permission> findPermission(String queryString);
+
+    Integer findPermissionInMid(Integer id);
+
+    void deletePermission(Integer id);
+
+    void addPermission(Permission permission);
+
+    void updatePermission(Permission permission);
+
+    Permission findPermissionById(Integer id);
+
+    List<Permission> findAllPermission();
+
 }

@@ -1,6 +1,12 @@
 package com.itheima.service;
 
+import com.itheima.entity.PageResult;
+import com.itheima.entity.QueryPageBean;
+import com.itheima.pojo.CheckGroup;
+import com.itheima.pojo.Role;
 import com.itheima.pojo.User;
+
+import java.util.List;
 
 /**
  * @user: Eric
@@ -21,4 +27,21 @@ public interface UserService {
      * @return
      */
     User findByUsername2(String username);
+
+    PageResult<User> findPage(QueryPageBean queryPageBean);
+
+    void deleteById(Integer id);
+
+    List<Role> findAllRoles();
+
+    void addUser(User user, Integer[] ids);
+
+    User findUserById(Integer id);
+
+    List<Role> findAllRolesById();
+
+    List<Integer> findRoleIdsByUserId(Integer id);
+
+    void updateUser(User user, Integer[] roleIds);
+
 }

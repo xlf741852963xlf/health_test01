@@ -30,4 +30,62 @@
             </collection>
         </collection>
     </resultMap>
+
+
+    <select id="findByCondition" parameterType="string" resultType="com.itheima.pojo.User">
+        select * from t_user
+        <where>
+            <if test="value != null and value.length > 0">
+                username like #{value}
+            </if>
+        </where>
+    </select>
+
+
+    <delete id="DeleteUserInMid" parameterType="integer">
+        DELETE FROM t_user_role WHERE user_id=#{id}
+    </delete>
+
+    <delete id="DeleteUserInUser" parameterType="integer">
+        DELETE FROM t_user WHERE id=#{id}
+    </delete>
+
+    <insert id="addUser" parameterType="com.itheima.pojo.User" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO t_user (birthday,gender,username,password,remark,station,telephone) VALUES(#{birthday},#{gender},#{username},#{password},#{remark},#{station},#{telephone})
+    </insert>
+
+    <insert id="addUserRoleIds" parameterType="integer">
+        INSERT INTO t_user_role (user_id,role_id) VALUES (#{id},#{ids})
+    </insert>
+
+    <select id="findUserById" parameterType="integer" resultType="com.itheima.pojo.User">
+        select * from t_user where id=#{id}
+    </select>
+
+    <select id="findAllRolesById" parameterType="integer" resultType="com.itheima.pojo.Role">
+        select * from t_role
+    </select>
+
+    <select id="findRoleIdsByUserId" parameterType="integer" resultType="integer">
+        select role_id from t_user_role where user_id=#{id}
+    </select>
+
+    <delete id="deleteRoleIdsByUserId" parameterType="integer">
+        delete from t_user_role where user_id=#{id}
+    </delete>
+
+    <insert id="insertRoleIdsByUserId" parameterType="integer">
+        insert into t_user_role (user_id,role_id) values (#{id},#{roleId});
+    </insert>
+
+    <update id="updateUser" parameterType="com.itheima.pojo.User">
+        UPDATE t_user SET
+                birthday=#{birthday},
+                gender=#{gender},
+                username=#{username},
+                PASSWORD=#{password},
+                remark=#{remark},
+                station=#{station},
+                telephone=#{telephone} where id=#{id}
+    </update>
 </mapper>

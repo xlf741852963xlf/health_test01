@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace属性: 接口类的全限定名-->
+<mapper namespace="com.itheima.dao.MenuDao">
+    <!--select标签: 查询
+        id属性: 方法名
+        resultType属性: 写方法返回值类型(如果是list,直接写实体类的全限定名)
+        标签体: sql语句
+    -->
+
+    <select id="findById" parameterType="integer" resultType="com.itheima.pojo.Menu">
+        SELECT * FROM t_menu WHERE id=#{id}
+    </select>
+
+
+
+    <resultMap id="findAllMenusResultMap" type="com.itheima.pojo.Menu">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <collection property="children" ofType="com.itheima.pojo.Menu">
+            <id column="tm_id" property="id"/>
+            <result column="tm_name" property="name"/>
+            <result column="tm_pid" property="parentMenuId"/>
+        </collection>
+    </resultMap>
+    <select id="findAllMenus" resultMap="findAllMenusResultMap">
+        SELECT t1.`id`,t1.`name`,t2.tm_id,t2.tm_name,t2.tm_pid FROM t_menu t1,(SELECT t_m.`id` tm_id,t_m.`name` tm_name,t_m.`parentMenuId` tm_pid FROM t_menu t_m WHERE LEVEL=2) t2 WHERE t1.id=t2.tm_pid
+    </select>
+
+
+    <select id="findMenuPage" parameterType="string" resultType="com.itheima.pojo.Menu">
+        select * from t_menu
+        <where>
+            <if test="value!=null and value.length>0">
+                name like #{value}
+            </if>
+        </where>
+    </select>
+
+    <select id="findMenuIdsFromt_role_menu" parameterType="integer" resultType="integer">
+        select count(1) from t_role_menu where menu_id=#{id}
+    </select>
+
+    <delete id="deleteMenu" parameterType="integer">
+        delete from t_menu where id=#{id}
+    </delete>
+
+    <select id="findFirstMenu" resultType="java.util.Map">
+        select id value,name label from t_menu where level=1
+    </select>
+
+    <select id="getFirstMenuNum" resultType="integer">
+        select count(1) from t_menu where level=1
+    </select>
+
+    <select id="getSecondMenuNum" parameterType="integer" resultType="integer">
+        select count(1) from t_menu where parentMenuId=#{id}
+    </select>
+
+    <insert id="addMenu" parameterType="com.itheima.pojo.Menu">
+        INSERT INTO t_menu (name,linkUrl,path,priority,icon,description,parentMenuId,level) VALUES (#{name},#{linkUrl},#{path},#{priority},#{icon},#{description},#{parentMenuId},#{level})
+    </insert>
+
+    <select id="getPriority" parameterType="integer" resultType="java.lang.Integer">
+        select priority from t_menu where id=#{id}
+    </select>
+
+    <select id="findMenuById" parameterType="integer" resultType="com.itheima.pojo.Menu">
+        select * from t_menu where id=#{id}
+    </select>
+
+    <update id="updateMenu" parameterType="com.itheima.pojo.Menu">
+        UPDATE t_menu SET name=#{name},linkUrl=#{linkUrl},path=#{path},priority=#{priority},icon=#{icon},description=#{description},parentMenuId=#{parentMenuId},level=#{level} where id=#{id}
+    </update>
+
+</mapper>

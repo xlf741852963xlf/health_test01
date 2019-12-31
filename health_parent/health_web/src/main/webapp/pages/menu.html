@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- 页面meta -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>传智健康</title>
+        <meta name="description" content="传智健康">
+        <meta name="keywords" content="传智健康">
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+        <!-- 引入样式 -->
+        <link rel="stylesheet" href="../plugins/elementui/index.css">
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+
+    </head>
+    <body class="hold-transition">
+        <div id="app">
+            <div class="content-header">
+                <h1>用户/菜单/权限/角色管理<small>菜单管理</small></h1>
+                <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+                    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>用户/菜单/权限/角色管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>菜单管理</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <div class="app-container">
+                <div class="box">
+                    <div class="filter-container">
+                        <el-input placeholder="菜单名称" v-model="pagination.queryString" style="width: 200px;" class="filter-item"></el-input>
+                        <el-button @click="findPage()" class="dalfBut">查询</el-button>
+                        <el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
+                    </div>
+                    <el-table size="small" current-row-key="id":data="dataList" stripe highlight-current-row>
+                        <el-table-column type="index" align="center" label="序号"></el-table-column>
+                        <el-table-column prop="name" label="菜单名称" align="center"></el-table-column>
+                        <el-table-column prop="linkUrl" label="链接地址" align="center"></el-table-column>
+                        <el-table-column prop="level" label="菜单级别" align="center"></el-table-column>
+                        <el-table-column prop="path" label="菜单路由" align="center"></el-table-column>
+                        <el-table-column prop="priority" label="排序" align="center"></el-table-column>
+                        <el-table-column prop="icon" label="图标" align="center"></el-table-column>
+                        <el-table-column prop="description" label="菜单说明" align="center"></el-table-column>
+                        <el-table-column prop="parentMenuId" label="父级菜单" align="center"></el-table-column>
+                        <el-table-column label="操作" align="center">
+                            <!--
+                                template: 定义模板，定义组件
+                                slot-scope: 插槽
+                                作用：格式化输出
+                                scope: 作用域里有封装的信息
+                                scope.row: 表格中这一行的原数据
+                            -->
+                            <template slot-scope="scope">
+                                <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
+                                <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="pagination-container">
+                        <el-pagination
+                            class="pagiantion"
+                            @current-change="handleCurrentChange"
+                            :current-page="pagination.currentPage"
+                            :page-size="pagination.pageSize"
+                            layout="total, prev, pager, next, jumper"
+                            :total="pagination.total">
+                        </el-pagination>
+                    </div>
+                    <!-- 新增标签弹层 -->
+                    <div class="add-form">
+                        <el-dialog title="新增菜单项" :visible.sync="dialogFormVisible">
+                            <el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="菜单名称" prop="name">
+                                            <el-input v-model="formData.name"/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="链接地址" prop="">
+                                            <el-input v-model="formData.linkUrl"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="菜单级别">
+<!--                                            <el-select v-model="formData.level">-->
+<!--                                                <el-option label="一级菜单" value="1"></el-option>-->
+<!--                                                <el-option label="二级菜单" value="2"></el-option>-->
+<!--                                                <el-option label="三级菜单" value="3"></el-option>-->
+<!--                                                <el-option label="四级菜单" value="4"></el-option>-->
+<!--                                            </el-select>-->
+                                            <div class="block">
+                                                <el-cascader
+                                                        v-model="value"
+                                                        :options="options"
+                                                        @change="handleChange"></el-cascader>
+                                            </div>
+                                        </el-form-item>
+<!--                                    </el-col>-->
+<!--                                    <el-col :span="12">-->
+<!--                                        <el-form-item label=优先级">-->
+<!--                                            <el-select v-model="formData.priority">-->
+<!--                                                <el-option label="1" value="1"></el-option>-->
+<!--                                                <el-option label="2" value="2"></el-option>-->
+<!--                                                <el-option label="3" value="3"></el-option>-->
+<!--                                                <el-option label="4" value="4"></el-option>-->
+<!--                                            </el-select>-->
+<!--                                        </el-form-item>-->
+
+                                    </el-col>
+
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form-item label="上传图标">
+                                            <!--elementui上传组件
+                                                class: 样式
+                                                action: 动作，接收文件的controller的方法
+                                                auto-upload: 是否自动上传，选中图片后就触发
+                                                name【重要】: <form encryt=Multipart/ aaaa><input type=file name="file">
+                                                                 Controller name 提交的参数名
+                                                                 name="imgFile" => @ReqeuestParam("imgFile") MultipartFile
+                                                show-file-list: 是否显示上传的文件列表，多个文件上传时可用
+                                                on-success： 上传成功后的回调，调用handleAvatarSuccess方法
+                                                before-upload:  上传前调用的方法 校验
+                                            -->
+                                            <el-upload
+                                                    class="avatar-uploader"
+                                                    action="/menu/upload.do"
+                                                    :auto-upload="autoUpload"
+                                                    name="imgFile"
+                                                    :show-file-list="false"
+                                                    :on-success="handleAvatarSuccess"
+                                                    :before-upload="beforeAvatarUpload">
+                                                <!--v-if="imageUrl" 如果imageUrl有值，则输出这个img标签
+                                                    imageUrl: 代表着上传后图片的回显地址, http://域名/图片名称
+                                                -->
+                                                <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                                <!--如果imageUrl =null undefined, "" false ，输出 <i>-->
+                                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                            </el-upload>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form-item label="菜单描述">
+                                            <el-input v-model="formData.description" type="textarea"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormVisible = false">取消</el-button>
+                                <el-button type="primary" @click="handleAdd()">确定</el-button>
+                            </div>
+                        </el-dialog>
+                    </div>
+
+                    <!-- 编辑标签弹层 -->
+                    <div class="add-form">
+                        <el-dialog title="编辑菜单项" :visible.sync="dialogFormVisible4Edit">
+                            <el-form ref="dataEditForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="菜单名称" prop="name">
+                                            <el-input v-model="formData.name"/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="链接地址" prop="name">
+                                            <el-input v-model="formData.linkUrl"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="菜单级别">
+                                            <!--                                            <el-select v-model="formData.level">-->
+                                            <!--                                                <el-option label="一级菜单" value="1"></el-option>-->
+                                            <!--                                                <el-option label="二级菜单" value="2"></el-option>-->
+                                            <!--                                                <el-option label="三级菜单" value="3"></el-option>-->
+                                            <!--                                                <el-option label="四级菜单" value="4"></el-option>-->
+                                            <!--                                            </el-select>-->
+                                            <div class="block">
+                                                <el-cascader
+                                                        v-model="value"
+                                                        :options="options"
+                                                        @change="handleChange"></el-cascader>
+                                            </div>
+                                        </el-form-item>
+                                        <!--                                    </el-col>-->
+                                        <!--                                    <el-col :span="12">-->
+                                        <!--                                        <el-form-item label=优先级">-->
+                                        <!--                                            <el-select v-model="formData.priority">-->
+                                        <!--                                                <el-option label="1" value="1"></el-option>-->
+                                        <!--                                                <el-option label="2" value="2"></el-option>-->
+                                        <!--                                                <el-option label="3" value="3"></el-option>-->
+                                        <!--                                                <el-option label="4" value="4"></el-option>-->
+                                        <!--                                            </el-select>-->
+                                        <!--                                        </el-form-item>-->
+
+                                    </el-col>
+
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form-item label="上传图标">
+                                            <!--elementui上传组件
+                                                class: 样式
+                                                action: 动作，接收文件的controller的方法
+                                                auto-upload: 是否自动上传，选中图片后就触发
+                                                name【重要】: <form encryt=Multipart/ aaaa><input type=file name="file">
+                                                                 Controller name 提交的参数名
+                                                                 name="imgFile" => @ReqeuestParam("imgFile") MultipartFile
+                                                show-file-list: 是否显示上传的文件列表，多个文件上传时可用
+                                                on-success： 上传成功后的回调，调用handleAvatarSuccess方法
+                                                before-upload:  上传前调用的方法 校验
+                                            -->
+                                            <el-upload
+                                                    class="avatar-uploader"
+                                                    action="/menu/upload.do"
+                                                    :auto-upload="autoUpload"
+                                                    name="imgFile"
+                                                    :show-file-list="false"
+                                                    :on-success="handleAvatarSuccess"
+                                                    :before-upload="beforeAvatarUpload">
+                                                <!--v-if="imageUrl" 如果imageUrl有值，则输出这个img标签
+                                                    imageUrl: 代表着上传后图片的回显地址, http://域名/图片名称
+                                                -->
+                                                <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                                <!--如果imageUrl =null undefined, "" false ，输出 <i>-->
+                                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                            </el-upload>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form-item label="菜单描述">
+                                            <el-input v-model="formData.description" type="textarea"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormVisible4Edit = false">取消</el-button>
+                                <el-button type="primary" @click="handleEdit()">确定</el-button>
+                            </div>
+                        </el-dialog>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <!-- 引入组件库 -->
+    <script src="../js/vue.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+    <script>
+        var vue = new Vue({
+            el: '#app',
+            data:{
+                pagination: {//分页数据模型
+				    currentPage: 1,//当前页码
+				    pageSize:10,//每页显示的记录数
+				    total:0,//总记录数
+				    queryString:null//查询条件
+				},
+                imageUrl: null,//模型数据，用于上传图片完成后图片预览
+				dataList: [],//当前页要展示的分页列表数据
+                formData: {},//表单数据
+                dialogFormVisible: false,//增加表单是否可见，即是否弹出添加窗口
+                dialogFormVisible4Edit:false,//修改表单是否可见，即是否弹出修改窗口
+                rules: {//校验规则
+                    name: [{ required: true, message: '菜单名称为必填项', trigger: 'blur' }],
+                    level: [{ required: true, message: '菜单级别为必填项', trigger: 'blur' }]
+                },
+
+                value: [],
+                options: [{
+                    value: 1,
+                    label: '一级菜单'
+                }, {
+                    value: 2,
+                    label: '二级菜单',
+                    children: [{
+                        value: 3,
+                        label: '',
+                    }, {
+                        value: 6,
+                        label: '',
+                    }, {
+                        value: 8,
+                        label: '',
+                    }, {
+                        value: 9,
+                        label: '',
+                    }, {
+                        value: 7,
+                        label: '',
+                    }, {
+                        value: 0,
+                        label: '',
+                    }]
+                }]
+
+
+
+
+
+
+            },
+            //钩子函数，VUE对象初始化完成后自动执行
+            created(){
+                this.findPage();
+            },
+            methods: {
+				// 弹出添加窗口
+                handleCreate() {
+                    this.resetForm();
+                    // 弹出
+                    this.dialogFormVisible = true;
+                    axios.post('/menu/findFirstMenu.do')
+                            .then(res => {
+                                //成功方法体
+                                this.options[1].children=res.data.data;
+
+                            })
+                            .catch(error => {
+                                //失败方法体
+
+                            });
+                },
+				// 添加
+                handleAdd () {
+                    //判断菜单级别是否为空
+                    if(this.value.length==0){
+                        alert("菜单级别为必填项")
+                        return;
+                    }
+
+                    // 发送请求，提交formData
+                    this.$refs['dataAddForm'].validate(valid => {
+                        if(valid) {
+                            var img = this.imageUrl.substring(this.imageUrl.lastIndexOf('/') + 1);
+                            // formData中并没有img属性 javabean package，给formData中的img赋值
+                            this.formData.icon = img;
+                            axios.post('/menu/addMenu.do?level='+this.value, this.formData).then(res => {
+                                //result {flag, message, data}
+                                // 响应结果提示
+                                this.$message({
+                                    message: res.data.message,
+                                    type: res.data.flag ? 'success' : 'error'
+                                });
+                                if (res.data.flag) {
+                                    // 成功关闭窗口，
+                                    this.dialogFormVisible = false;
+                                    // 且刷新列表数据
+                                    this.findPage();
+                                }
+                            })
+                        }
+                    })
+                },				
+                // 重置表单
+                resetForm() {
+                    // 清空表单内容
+                    this.formData = {};
+                    this.value=[];
+                    this.imageUrl=null;
+                },
+				// 分页查询
+                findPage() {
+                    // 提交查询条件、大小，页码
+                    axios.post('/menu/findMenuPage.do', this.pagination).then(res => {
+                        if(res.data.flag){
+                            // 成功
+                            // 绑定列表数据
+                            this.dataList = res.data.data.rows;
+                            this.pagination.total = res.data.data.total;
+                        }else{
+                            this.$message({
+                                message: res.data.message,
+                                type: 'error'
+                            })
+                        }
+                    })
+                },
+                // 删除
+                handleDelete(row) {
+                    var id = row.id;
+                    // 询问
+                    this.$confirm('此操作将【永久删除】该检查项, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        // 点击确定执行
+                        // 请求删除数据
+                        axios.post('/menu/deleteMenu.do?id=' + id).then(res => {
+                            this.$message({
+                                message: res.data.message,
+                                type: res.data.flag?'success':'error'
+                            });
+                            if(res.data.flag){
+                                this.findPage();
+                            }
+                        })
+                    }).catch(() => {
+                        // 点击取消时执行
+
+                    });
+                },
+                // 修改数据后提交
+                handleEdit() {
+                    this.$refs['dataEditForm'].validate(valid => {
+                        // 验证通过 if(valid) valid为true, valid有值不为false
+                        // 不为空 if(!valid) valid不为空也不为false, null, '', undefined
+                        if(valid){
+                            if(this.value.length==0){
+                                alert("菜单级别为必填项")
+                                return;
+                            }
+                            var img = this.imageUrl.substring(this.imageUrl.lastIndexOf('/') + 1);
+                            // formData中并没有img属性 javabean package，给formData中的img赋值
+                            this.formData.icon = img;
+                            axios.post('/menu/updateMenu.do?level='+this.value, this.formData).then(res => {
+                                this.$message({
+                                    message: res.data.message,
+                                    type: res.data.flag?'success':'error'
+                                });
+                                if(res.data.flag){
+                                    // 成功则关闭窗口且刷新列表
+                                    this.dialogFormVisible4Edit = false;
+                                    this.findPage();
+                                }
+                            })
+                        }
+                    })
+                },
+                // 弹出修改窗口
+                handleUpdate(row) {
+                    //alert(JSON.stringify(row));
+                    // 获取id
+                    var id = row.id;
+                    this.resetForm();
+                    // 弹出修改的窗口
+                    this.dialogFormVisible4Edit = true;
+                    // 发送请求，回显数据
+                    axios.get('/menu/findMenuById.do?id=' + id).then(res=>{
+                        if(res.data.flag){
+                            // 回显
+                            this.$message({
+                                message: res.data.message,
+                                type: 'success'
+                            });
+                            axios.post('/menu/findFirstMenu.do')
+                                .then(res => {
+                                    //成功方法体
+                                    this.options[1].children=res.data.data;
+
+                                })
+                                .catch(error => {
+                                    //失败方法体
+
+                                });
+                            if (res.data.data.level==1){
+                                this.value=[1];
+                            }else{
+                                this.value=[2,res.data.data.parentMenuId]
+                            }
+                            this.formData = res.data.data;
+                            this.imageUrl=res.data.data.icon;
+                        }else{
+                            this.$message({
+                                message: res.data.message,
+                                type: 'error'
+                            })
+                        }
+                    })
+                },
+                //上传图片之前执行, 被elementUI调用
+                beforeAvatarUpload(file) {
+                    //file 选中的文件
+                    const isJPG =this.matchType(file.name);
+                    const isLt2M = file.size / 1024 / 1024 < 2;
+                    if (!isJPG) {
+                        this.$message.error('上传套餐图片只能是 ICO 格式!');
+                    }
+                    if (!isLt2M) {
+                        this.$message.error('上传套餐图片大小不能超过 2MB!');
+                    }
+                    return isJPG && isLt2M;
+                },
+                //文件上传成功后的钩子，response为服务端返回的值，file为当前上传的文件封装成的js对象
+                handleAvatarSuccess(response, file) {
+                    //console.log(response);
+                    // response经过elementUI处理过的，相当于原来的 res.data = response
+                    // 图片回显
+                    if(response.flag){
+                        this.imageUrl = response.data;
+                        //{
+                        //    flag:
+                        //        message:
+                        //            data:{
+                        //                domain: http://q2r11ygqx.bkt.clouddn.com/
+                        //                    img: timg.jpg
+                        //            }
+                        //}
+                        //this.formData.img = response.data.img;
+                    }else{
+                        this.$message({
+                            message: response.message,
+                            type: 'error'
+                        })
+                    }
+                },
+                // 根据文件名后缀区分 文件类型
+                /*
+                 * @param: fileName - 文件名称
+                 * @param: 数据返回 1) 无后缀匹配 - false
+                 * @param: 数据返回 2) 匹配图片 - image
+                 * @param: 数据返回 3) 匹配 txt - txt
+                 * @param: 数据返回 4) 匹配 excel - excel
+                 * @param: 数据返回 5) 匹配 word - word
+                 * @param: 数据返回 6) 匹配 pdf - pdf
+                 * @param: 数据返回 7) 匹配 ppt - ppt
+                 * @param: 数据返回 8) 匹配 视频 - video
+                 * @param: 数据返回 9) 匹配 音频 - radio
+                 * @param: 数据返回 10) 其他匹配项 - other
+                 */
+                matchType(fileName) {
+                    // 后缀获取
+                    var suffix = '';
+                    // 获取类型结果
+                    var result = '';
+                    try {
+                        var flieArr = fileName.split('.');
+                        suffix = flieArr[flieArr.length - 1];
+                    } catch (err) {
+                        suffix = '';
+                    }
+                    // fileName无后缀返回 false
+                    if (!suffix) {
+                        result = false;
+                        return result;
+                    }
+                    // 图片格式
+                    var imglist = ['ico'];
+                    // 进行图片匹配
+                    result = imglist.some(function (item) {
+                        return item == suffix;
+                    });
+                    if (result) {
+                        result = 'image';
+                        return result;
+                    };
+                    // 匹配txt
+                    var txtlist = ['txt'];
+                    result = txtlist.some(function (item) {
+                        return item == suffix;
+                    });
+                    if (result) {
+                        result = 'txt';
+                        return result;
+                    };
+                    // 匹配 excel
+                    var excelist = ['xls', 'xlsx'];
+                    result = excelist.some(function (item) {
+                        return item == suffix;
+                    });
+                    if (result) {
+                        result = 'excel';
+                        return result;
+                    };
+                    // 匹配 word
+                    var wordlist = ['doc', 'docx'];
+                    result = wordlist.some(function (item) {
+                        return item == suffix;
+                    });
+                    if (result) {
+                        result = 'word';
+                        return result;
+                    };
+                    // 匹配 pdf
+                    var pdflist = ['pdf'];
+                    result = pdflist.some(function (item) {
+                        return item == suffix;
+                    });
+                    if (result) {
+                        result = 'pdf';
+                        return result;
+                    };
+                    // 匹配 ppt
+                    var pptlist = ['ppt'];
+                    result = pptlist.some(function (item) {
+                        return item == suffix;
+                    });
+                    if (result) {
+                        result = 'ppt';
+                        return result;
+                    };
+                    // 匹配 视频
+                    var videolist = ['mp4', 'm2v', 'mkv'];
+                    result = videolist.some(function (item) {
+                        return item == suffix;
+                    });
+                    if (result) {
+                        result = 'video';
+                        return result;
+                    };
+                    // 匹配 音频
+                    var radiolist = ['mp3', 'wav', 'wmv'];
+                    result = radiolist.some(function (item) {
+                        return item == suffix;
+                    });
+                    if (result) {
+                        result = 'radio';
+                        return result;
+                    }
+                    // 其他 文件类型
+                    result = 'other';
+                    return result;
+                },
+                // 切换页码时，需要刷新列表
+                handleCurrentChange(currentPage) {
+                    //  改变页码
+                    this.pagination.currentPage = currentPage;
+                    this.findPage();
+                }
+            }
+        })
+    </script>
+</html>
